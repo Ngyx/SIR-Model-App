@@ -4,8 +4,8 @@ library(shiny)
 shinyUI(fluidPage(
 
     # Application title
-    titlePanel("Simulating spread of infectious disease and effects of interventions
-               in a population of 10,000"),
+    titlePanel(h3("Simulating spread of infectious disease and effects of 7-day interventions
+               in a population of 10,000")),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(
@@ -15,7 +15,7 @@ shinyUI(fluidPage(
             sliderInput("I0_input","Initial number of infections:",
                         min=1,max=500,value=5),
             sliderInput("gamma_day_input","Number of days to recovery after infection:",
-                        min=1,max=10,value=5),
+                        min=1,max=10,value=8),
             sliderInput("time_of_intervention_input","Time of intervention (days):",
                         min=1,max=100,value=20),
             sliderInput("intervention_input","Reduction in spread after intervention",
@@ -27,7 +27,9 @@ shinyUI(fluidPage(
         mainPanel(
             plotOutput("Plot"),
             textOutput("MaxInfections"),
-            textOutput("Total")
+            textOutput("Total"),
+            h3(""),
+            em("Shiny app made by Yixiang Ng. Last updated on 2 November 2021")
         )
     )
 ))

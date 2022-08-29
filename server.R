@@ -32,24 +32,29 @@ shinyServer(function(input, output) {
         R0 = 0
         time_of_intervention = input$time_of_intervention_input
         intervention = 1-input$intervention_input
+        intervention_period = 7
         
         gamma_day = input$gamma_day_input
         gamma = 1/gamma_day 
         beta = gamma*R
         beta_intervention = intervention * beta
+        
         xstart = c(S=S0,I=I0,R=R0)
         params=c(beta=beta,gamma=gamma)
-        
         times = seq(0,time_of_intervention,by=1)
-        
         out1 = as.data.frame(ode(xstart,times,sir.model.closed,params)) 
         
         xstart = c(S=out1$S[time_of_intervention+1],I=out1$I[time_of_intervention+1],R=out1$R[time_of_intervention+1])
         params = c(beta=beta_intervention,gamma=gamma)
-        times =  seq(time_of_intervention+1,200,by=1)
+        times =  seq(time_of_intervention+1,time_of_intervention+1+intervention_period,by=1)
         out2 = as.data.frame(ode(xstart,times,sir.model.closed,params))  #result stored in dataframe
         
-        out = rbind(out1,out2[-1,])
+        xstart = c(S=out2$S[intervention_period+1],I=out2$I[intervention_period+1],R=out2$R[intervention_period+1])
+        params = c(beta=beta,gamma=gamma)
+        times =  seq(time_of_intervention+1+intervention_period+1,200,by=1)
+        out3 = as.data.frame(ode(xstart,times,sir.model.closed,params))
+        
+        out = rbind(out1,out2[-1,],out3[-1,])
         out
     })
     
@@ -63,6 +68,6 @@ shinyServer(function(input, output) {
     })
     
     output$MaxInfections = renderText({paste0("Max no. of daily infections: ",round(max(out()$I)))})
-    output$Total = renderText({paste0("Total number of infections at end: ", round(out()$R[200]))})
+    output$Total = renderText({paste0("Total number of infections at end: ", round(out()$R[199]))})
 
 })
